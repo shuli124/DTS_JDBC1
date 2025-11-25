@@ -5,12 +5,14 @@ import com.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/addUser")
 public class AddServlet extends HttpServlet {
-    private UserServiceImpl us = new UserServiceImpl();
+    private UserServiceImpl userService = new UserServiceImpl();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -21,7 +23,11 @@ public class AddServlet extends HttpServlet {
         user.setGender(req.getParameter("gender"));
         user.setEmail(req.getParameter("email"));
 
-        us.addUser(user);
-        resp.sendRedirect("userList");
+        if (userService.addUser(user)) {
+            resp.sendRedirect(req.getContextPath() + "/userList");
+        } else {
+            req.setAttribute("error", "添加失败，用户已存在！");
+            req.getRequestDispatcher("/pages/add.jsp").forward(req, resp);
+        }
     }
 }

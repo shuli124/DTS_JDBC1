@@ -1,10 +1,14 @@
 package com.service;
-import com.bean.User;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
+import com.bean.User;
+import java.util.List;
 
 public interface UserService {
-    void addUser(User user) throws SQLException, ClassNotFoundException;
-    ArrayList<User> FindAllUser() throws SQLException, ClassNotFoundException;
+    boolean login(String username, String password);
+    boolean register(User user);
+    List<User> getAllUsers();
+    User getUserById(int id);
+    boolean addUser(User user);
+    boolean updateUser(User user);
+    boolean deleteUser(int id);
 }

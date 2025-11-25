@@ -5,23 +5,28 @@ import com.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/updateUser")
 public class UpdateServlet extends HttpServlet {
-    private UserServiceImpl us = new UserServiceImpl();
+    private UserServiceImpl userService = new UserServiceImpl();
 
-    // 跳转到修改页面（回显）
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         int id = Integer.parseInt(req.getParameter("id"));
-        User user = us.getUserById(id);
-        req.setAttribute("user", user);
-        req.getRequestDispatcher("/pages/update.jsp").forward(req, resp);
+        User user = userService.getUserById(id);
+        if (user != null) {
+            req.setAttribute("user", user);
+            req.getRequestDispatcher("/pages/update.jsp").forward(req, resp);
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/userList");
+        }
     }
 
-    // 真正执行修改
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -32,7 +37,11 @@ public class UpdateServlet extends HttpServlet {
         user.setGender(req.getParameter("gender"));
         user.setEmail(req.getParameter("email"));
 
-        us.updateUser(user);
-        resp.sendRedirect("userList");
+        if (userService.updateUser(user)) {
+            resp.sendRedirect(req.getContextPath() + "/userList");
+        } else {
+            req.setAttribute("error", "修改失败！");
+            req.getRequestDispatcher("/pages/update.jsp").forward(req, resp);
+        }
     }
 }

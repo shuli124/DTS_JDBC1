@@ -1,31 +1,28 @@
 package com.utils;
 
-import com.bean.User;
-import com.mysql.jdbc.Driver;
-
 import java.sql.*;
-import java.util.ArrayList;
 
 public class JDBCUtils {
-    public static Connection con;
-    public static Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        String url="jdbc:mysql://localhost:3306/jin1";
-        String username="root";
-        String password="123456";
-        con = DriverManager.getConnection(url, username, password);
-        return con;
-    }
-    public static void close(Connection con, PreparedStatement ps, ResultSet rs) throws SQLException {
-        if(con!=null){
-            con.close();
-            con = null;
-        } else if(ps!=null){
-            ps.close();
-            ps = null;
-        }else if(rs!=null){
-            rs.close();
-            rs = null;
+    private static final String URL = "jdbc:mysql://localhost:3306/user_db?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai";
+    private static final String USER = "root";
+    private static final String PASSWORD = "123456";  // ← 改成你的真实 MySQL 密码！！！
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+
+    static {
+        try {
+            Class.forName(DRIVER);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
+    public static void close(ResultSet rs, Statement stmt, Connection conn) {
+        if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+        if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+        if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
     }
 }
