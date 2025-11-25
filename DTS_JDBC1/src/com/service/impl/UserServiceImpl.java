@@ -11,42 +11,77 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean login(String username, String password) {
-        User user = userDao.findByUsername(username);
-        if (user == null) return false;
-        return user.getPassword().equals(password);
+        try {
+            User user = userDao.findByUsername(username);
+            if (user == null) return false;
+            return user.getPassword().equals(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean register(User user) {
-        int rows = userDao.addUser(user);
-        return rows > 0;
+        try {
+            int rows = userDao.addUser(user);
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public List<User> getAllUsers() {
-        return userDao.findAll();
+        try {
+            return userDao.findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public User getUserById(int id) {
-        return userDao.findById(id);
+        try {
+            return userDao.findById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public boolean addUser(User user) {
-        int rows = userDao.addUser(user);
-        return rows > 0;
+        try {
+            int rows = userDao.addUser(user);
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean updateUser(User user) {
-        int rows = userDao.updateUser(user);
-        return rows > 0;
+        try {
+            int rows = userDao.updateUser(user);
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean deleteUser(int id) {
-        int rows = userDao.deleteUser(id);
-        return rows > 0;
+        try {
+            int rows = userDao.deleteUser(id);
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -17,12 +17,16 @@ public class UpdateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        int id = Integer.parseInt(req.getParameter("id"));
-        User user = userService.getUserById(id);
-        if (user != null) {
-            req.setAttribute("user", user);
-            req.getRequestDispatcher("/pages/update.jsp").forward(req, resp);
-        } else {
+        try {
+            int id = Integer.parseInt(req.getParameter("id"));
+            User user = userService.getUserById(id);
+            if (user != null) {
+                req.setAttribute("user", user);
+                req.getRequestDispatcher(req.getContextPath() + "/pages/update.jsp").forward(req, resp);  // 加上下文路径
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/userList");
+            }
+        } catch (NumberFormatException e) {
             resp.sendRedirect(req.getContextPath() + "/userList");
         }
     }
@@ -30,18 +34,24 @@ public class UpdateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        User user = new User();
-        user.setId(Integer.parseInt(req.getParameter("id")));
-        user.setUsername(req.getParameter("username"));
-        user.setPassword(req.getParameter("password"));
-        user.setGender(req.getParameter("gender"));
-        user.setEmail(req.getParameter("email"));
+        try {
+            User user = new User();
+            user.setId(Integer.parseInt(req.getParameter("id")));
+            user.setUsername(req.getParameter("username"));
+            user.setPassword(req.getParameter("password"));
+            user.setGender(req.getParameter("gender"));
+            user.setEmail(req.getParameter("email"));
 
-        if (userService.updateUser(user)) {
-            resp.sendRedirect(req.getContextPath() + "/userList");
-        } else {
-            req.setAttribute("error", "修改失败！");
-            req.getRequestDispatcher("/pages/update.jsp").forward(req, resp);
+            if (userService.updateUser(user)) {
+                resp.sendRedirect(req.getContextPath() + "/userList");
+            } else {
+                req.setAttribute("error", "修改失败！");
+                req.setAttribute("user", user);
+                req.getRequestDispatcher(req.getContextPath() + "/pages/update.jsp").forward(req, resp);
+            }
+        } catch (NumberFormatException e) {
+            req.setAttribute("error", "ID 格式错误！");
+            req.getRequestDispatcher(req.getContextPath() + "/pages/update.jsp").forward(req, resp);
         }
     }
 }

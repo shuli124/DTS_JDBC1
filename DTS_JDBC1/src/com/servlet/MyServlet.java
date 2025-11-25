@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 
 @WebServlet("/login")
 public class MyServlet extends HttpServlet {
@@ -20,15 +19,11 @@ public class MyServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uname = req.getParameter("username");
         String pwd = req.getParameter("password");
-        User user = new User(uname, pwd);
+        User user = new User();
+        user.setUsername(uname);
+        user.setPassword(pwd);
         UserService userService = new UserServiceImpl();
-        try {
-            userService.addUser(user);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        userService.addUser(user);
 
     }
 
